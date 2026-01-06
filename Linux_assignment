@@ -1,0 +1,61 @@
+#creating a script file
+
+sudo nano /usr/local/bin/uncompress_research.sh
+
+#script file
+
+#!/bin/bash
+WORKDIR="/tmp"
+cd "$WORKDIR" || exit 1
+
+echo "This is research data for lab" > research
+
+gzip research
+
+echo "Created compressed file: /tmp/research.gz"
+
+#Find research compressed file
+FILE=$(find / -type f -name "research.*" 2>/dev/null | head -1)
+
+if [ -z "$FILE" ]; then
+    echo "No research file found"
+    exit 1
+fi
+
+echo "Found file: $FILE"
+
+#Detect compression & uncompress
+case "$FILE" in
+    *.gz)
+        echo "Gzip compression detected"
+        gunzip "$FILE"
+        ;;
+    *.bz2)
+        echo "Bzip2 compression detected"
+        bunzip2 "$FILE"
+        ;;
+    *.xz)
+        echo "XZ compression detected"
+        unxz "$FILE"
+        ;;
+    *.zip)
+        echo "ZIP compression detected"
+        unzip "$FILE"
+        ;;
+    *)
+        echo "Unknown compression type"
+        exit 1
+        ;;
+esac
+
+echo "Uncompression completed successfully"
+
+#Making it executable
+sudo chmod +x /usr/local/bin/uncompress_research.sh
+
+#Run the script
+uncompress_research.sh
+
+#Verifying
+ls /tmp/uncompress_research
+cat /tmp/uncompress_research
