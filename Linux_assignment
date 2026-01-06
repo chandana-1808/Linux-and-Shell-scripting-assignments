@@ -2,6 +2,11 @@
 
 sudo nano /usr/local/bin/uncompress_research.sh
 
+
+
+
+
+
 #script file
 
 #!/bin/bash
@@ -50,11 +55,22 @@ esac
 
 echo "Uncompression completed successfully"
 
+
+
+
+
+
 #Making it executable
 sudo chmod +x /usr/local/bin/uncompress_research.sh
 
+
+
+
 #Run the script
 uncompress_research.sh
+
+
+
 
 #Verifying
 ls /tmp/uncompress_research
