@@ -1,0 +1,68 @@
+#!/bin/bash
+
+CONF_FILE="sig.conf"
+
+valid_components=("INGESTOR" "JOINER" "WRANGLER" "VALIDATOR")
+valid_scales=("MID" "HIGH" "LOW")
+valid_views=("Auction" "Bid")
+
+# function to check valid input
+function validate() {
+    local input="$1"
+    shift
+    local arr=("$@")
+
+    for val in "${arr[@]}"; do
+        if [[ "$input" == "$val" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# component input from user
+read -p "Enter Component Name [INGESTOR/JOINER/WRANGLER/VALIDATOR]: " comp
+if ! validate "$comp" "${valid_components[@]}"; then
+    echo "Invalid component!"
+    exit 1
+fi
+
+# scale input from user
+read -p "Enter Scale [MID/HIGH/LOW]: " scale
+if ! validate "$scale" "${valid_scales[@]}"; then
+    echo "Invalid scale!"
+    exit 1
+fi
+
+# veiw input from user
+read -p "Enter View [Auction/Bid]: " view
+if ! validate "$view" "${valid_views[@]}"; then
+    echo "Invalid view!"
+    exit 1
+fi
+
+# signal digit number from user
+read -p "Enter Count (single digit 0-9): " count
+if ! [[ "$count" =~ ^[0-9]$ ]]; then
+    echo "Invalid count! Enter single digit only."
+    exit 1
+fi
+
+# Creating search pattern
+search_pattern="$view ; $scale ; $comp"
+
+# Creating replacement line
+new_line="$view ; $scale ; $comp ; ETL ; vdopia-etl=$count"
+
+# Using sed to replace only first matching line
+sed -i "0,/$search_pattern/s/.*/$new_line/" "$CONF_FILE"
+
+echo "Configuration updated successfully."
+
+
+
+
+
+
+
+
